@@ -1,5 +1,10 @@
 # Installing Tru64 on the ES40 Emulator on Linux
 
+In this guide I describe (and save for my further reference) the installation of DEC/Compaq/HP Tru64 on the ES40
+emulator https://github.com/ES40-Emu/es40 . Hopefully it is helpful to someone, if you have any questions or suggestions,
+please let me know.
+
+
 ## Preliminaries
 
 Download 6 CD images (5.1B) and the 5.1B4 patch kit.
