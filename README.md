@@ -7,7 +7,7 @@ please let me know.
 
 ## Preliminaries
 
-Download 6 CD images (5.1B) and the 5.1B4 patch kit.
+Download 6 CD images (5.1B) and the 5.1B8 patch kit.
 
 I downloaded all disks from:
 
