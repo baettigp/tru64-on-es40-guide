@@ -327,6 +327,10 @@ Proceed through the prompts as before:
 - Archive obsolete files: `n`
 - When asked for Worldwide Language Support media: `/dev/disk/cdrom1c`
 
+## Updating es40
+from time to time, ES40 needs to be updated.
+Run ```git pull --recurse-submodules```
+
 ## Alternative links
 Older versions are available under <https://winworldpc.com/product/tru64/51b> or <https://fsck.technology/software/DEC-Compaq/Tru64%20Install%20Media/Tru64%20UNIX%205.1B4/> 
 Also check <https://www.zx.net.nz/vc/updates/opsys/dunix.shtml> direct link to the newest update: <https://ftp.zx.net.nz/pub/Patches/digital/additional/tru64/5.1B-6/T64V51BB29AS0008-20100821.tar> )
