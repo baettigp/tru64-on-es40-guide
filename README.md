@@ -33,6 +33,10 @@ and `cl67srmrom.exe` from:
 - <https://raymii.org/s/inc/downloads/es40-srmon/cl67srmrom.exe>
   (via [this raymii.org writeup](https://raymii.org/s/blog/Installing_the_es40_AlphaServer_emulator_0.18_on_Ubuntu_16.04_and_trying_to_install_openVMS_8.4_on_es40.html))
 
+
+## Install all necessary tools for the compilation
+```sudo dnf install autoconf automake libpcap-devel gettext libtool intltool gtk-doc SDL3-devel g++ ncurses-devel```
+
 ## Install ES40
 
 ```bash
