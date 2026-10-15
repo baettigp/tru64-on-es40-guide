@@ -11,7 +11,8 @@ Download 6 CD images (5.1B) and the 5.1B8 patch kit.
 
 I downloaded all disks from:
 - <https://archive.org/compress/v-5.1-br-2650-o-1/formats=ISO%20IMAGE&file=/v-5.1-br-2650-o-1.zip>
-- and Patchkit 5.1B8:
+  
+and Patchkit 5.1B8:
 - <https://archive.org/download/v-5.1-br-2650-o-1/T64V51BB29AS0008-20100821.tar>
 
 Then get ES40: <https://github.com/ES40-Emu/es40/>
