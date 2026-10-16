@@ -3,7 +3,7 @@
 In this guide I describe (and save for my further reference) the installation of DEC/Compaq/HP Tru64 on the ES40
 emulator https://github.com/ES40-Emu/es40 . Hopefully it is helpful to someone, if you have any questions or suggestions,
 please let me know.
-
+I have tested it on Fedora 44, package names may differ on other distros. My test computer is a 6-core Core i5-9500, so emulating 4 CPUs was no problem. Consider emulating one CPU fewer than you have CPUs/cores (ES40 supports up to 4) and give the emulator less memory than your host system has.
 
 ## Preliminaries
 
@@ -18,14 +18,14 @@ and Patchkit 5.1B8:
 Then get ES40: <https://github.com/ES40-Emu/es40/>
 
 
-and `cl67srmrom.exe` from:
+and `cl67srmrom.exe` (the SRM firmware image to bootstrap the system) from:
 
 - <https://raymii.org/s/inc/downloads/es40-srmon/cl67srmrom.exe>
   (via [this raymii.org writeup](https://raymii.org/s/blog/Installing_the_es40_AlphaServer_emulator_0.18_on_Ubuntu_16.04_and_trying_to_install_openVMS_8.4_on_es40.html))
 
 ### Graphics
 #### S3 Graphics
-Standard: get the VGA ROM emulator file from:
+Standard: get the VGA Bios image used by the emulated graphics card from:
 - <https://github.com/BaRRaKudaRain/PCem-ROMs/raw/master/86c764x1.bin> and choose "S3" in es40_cfg or es40_cfg_tui
 
 #### Powerstorm Graphics
@@ -158,7 +158,7 @@ Which OS the reported year should be compatible with? (nt,vms) [vms]:
 Do you want to set a fixed date and time when the VM starts? (yes,no) [no]:
 ```
 
-## First boot
+## Installation
 
 ```bash
 cp ~/Downloads/"Tru64 UNIX 5.1B - Disk 1 Operating System [DEC Alpha]/Tru64 UNIX 5.1B - Operating System.iso" disks/cd_to_mount.iso
@@ -178,7 +178,7 @@ dva0.0.0.1000.0 DVA0
 ewa0.0.0.3.0    EWA0    08-00-2B-E5-40-00
 pka0.7.0.2.0    PKA0    SCSI Bus ID 7
 
-P00>>> b dka2
+P00>>> boot dka200
 ```
 
 After some time the installer starts up:
@@ -190,6 +190,14 @@ Go through the options: install everything, full kernel, and add any language pa
 ![Tru64 installer screen 2](images/installer-2.png)
 
 Hit **Finish**, then **OK**, and the installer copies everything.
+
+## First boot
+To boot the machine start es40, wait for the SRM prompt to come up and hit:
+
+```
+P00>>> boot dka100
+```
+
 
 ## General commands
 
@@ -249,14 +257,15 @@ sudo dnf install nfs-utils
 sudo systemctl enable --now nfs-server
 
 mkdir -p ~/tru64-share
-chmod 777 ~/tru64-share
+chmod 755 ~/tru64-share
 ```
 
 Add to `/etc/exports`:
 
 ```
-/home/YOURNAME/tru64-share 192.168.100.0/24(rw,sync,no_subtree_check,no_root_squash)
+/home/YOURNAME/tru64-share 192.168.100.0/24(rw,sync,no_subtree_check,all_squash,anonuid=1000,anongid=1000)
 ```
+use the values from `id -u` and `id -g` under linux. Tru64 will be able to write to your linux share, as your regular user.
 
 ```bash
 sudo exportfs -ra
@@ -282,6 +291,7 @@ Add to `/etc/fstab`:
 ```
 
 ## License PAKs
+Instructions are from <https://astr0baby.wordpress.com/2017/04/12/all-tru64-unix-5-1e-licenses/>:
 
 Download disk 1 from <https://winworldpc.com/product/tru64> (the 5.0 media — this is where the license PAK tools come from) under linux.
 
@@ -297,11 +307,13 @@ lmf list
 ```
 
 ## Installing the newest patch
+It is recommended to copy your disk image somewhere safe before applying the patch kit in case something should break. Copying the file back is faster than reinstalling and configuring the OS from scratch. Shut down ES40 and close the program, then on Linux run:
 
-Download the patch kit (as given in the preliminaries) and untar it into the NFS share:
+```bash
+cp disks/bootimgtru64.img disks/bootimgtru64.img.bak
+```
 
-
-
+Then download the Patch kit on Linux (cf Preliminaries) and untar it into the NFS share. On Tru64 run:
 ```bash
 mkdir /patch
 cp -r /mnt/fedora/patch/* /patch
@@ -352,4 +364,4 @@ third-party archives/mirrors — I don't host or control that content, and
 you use it at your own risk. Tru64 UNIX is old, unsupported software; 
 check the licensing situation for your own use case, I'm not a lawyer.
 
-Questions or hit a snag following this guide? Open an issue — happy to help where I can.
+Questions or hit a snag following this guide? Open an issue — happy to help where I can, but I cannot guarantee support as I am but a hobbyist myself.
