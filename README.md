@@ -17,18 +17,24 @@ and Patchkit 5.1B8:
 
 Then get ES40: <https://github.com/ES40-Emu/es40/>
 
-and the VGA ROM emulator file from:
-
-- <https://github.com/BaRRaKudaRain/PCem-ROMs/blob/master/86c764x1.bin>
 
 and `cl67srmrom.exe` from:
 
 - <https://raymii.org/s/inc/downloads/es40-srmon/cl67srmrom.exe>
   (via [this raymii.org writeup](https://raymii.org/s/blog/Installing_the_es40_AlphaServer_emulator_0.18_on_Ubuntu_16.04_and_trying_to_install_openVMS_8.4_on_es40.html))
 
+### Graphics
+#### S3 Graphics
+Standard: get the VGA ROM emulator file from:
+- <https://github.com/BaRRaKudaRain/PCem-ROMs/raw/master/86c764x1.bin> and choose "S3" in es40_cfg or es40_cfg_tui
+
+#### Powerstorm Graphics
+  Experimental at the moment:
+  Get the Powerstorm 300 Bios file at [VGA Museum](https://www.vgamuseum.info/index.php/cpu/item/517-compaq-powerstorm-300) and choose Powerstorm 300 in es40_cfg. According to the README of es40, at the moment this only reaches SRM. I haven't managed to find a Bios file for the Powerstorm 350 so far, if anyone has any lead or could read it out from their card, I'd be grateful for you opening a discussion. 
+
 
 ## Install all necessary tools for the compilation
-```sudo dnf install autoconf automake libpcap-devel gettext libtool intltool gtk-doc SDL3-devel g++ ncurses-devel```
+```sudo dnf install autoconf automake libpcap-devel gettext libtool intltool gtk-doc SDL3-devel gcc-c++ ncurses-devel```
 
 ## Install ES40
 
@@ -43,10 +49,10 @@ cp ~/Downloads/86c764x1.bin rom
 cp ~/Downloads/cl67srmrom.exe rom
 ```
 
-To install into `/usr/bin`:
+To install into `/usr/local/bin`:
 
 ```bash
-make install
+sudo make install
 ```
 
 Then adapt directories relative to your local install.
@@ -155,13 +161,12 @@ Do you want to set a fixed date and time when the VM starts? (yes,no) [no]:
 ## First boot
 
 ```bash
-mkdir disks
 cp ~/Downloads/"Tru64 UNIX 5.1B - Disk 1 Operating System [DEC Alpha]/Tru64 UNIX 5.1B - Operating System.iso" disks/cd_to_mount.iso
 sudo setcap cap_net_raw+ep src/es40
 src/es40
 ```
 
-Wait while the disk image is being prepared. You'll be asked which NIC to use — choose option 5 (`tap0`).
+Wait while the disk image is being prepared. You'll be asked which NIC to use — choose the option for (`tap0`).
 
 The system initializes the pre-boot environment. At the `P00>>>` prompt:
 
@@ -250,7 +255,7 @@ chmod 777 ~/tru64-share
 Add to `/etc/exports`:
 
 ```
-/home/baettig/tru64-share 192.168.100.0/24(rw,sync,no_subtree_check,no_root_squash)
+/home/YOURNAME/tru64-share 192.168.100.0/24(rw,sync,no_subtree_check,no_root_squash)
 ```
 
 ```bash
@@ -267,21 +272,25 @@ sudo firewall-cmd --reload
 
 ```bash
 mkdir /mnt/fedora
-mount -t nfs -o vers=3,proto=tcp 192.168.100.1:/home/baettig/tru64-share /mnt/fedora
+mount -t nfs -o vers=3,proto=tcp 192.168.100.1:/home/YOURNAME/tru64-share /mnt/fedora
 ```
 
 Add to `/etc/fstab`:
 
 ```
-192.168.100.1:/home/baettig/tru64-share /mnt/fedora nfs rw,vers=3,proto=tcp 0 0
+192.168.100.1:/home/YOURNAME/tru64-share /mnt/fedora nfs rw,vers=3,proto=tcp 0 0
 ```
 
 ## License PAKs
 
-Download disk 1 from <https://winworldpc.com/product/tru64> (the 5.0 media — this is where the license PAK tools come from).
+Download disk 1 from <https://winworldpc.com/product/tru64> (the 5.0 media — this is where the license PAK tools come from) under linux.
 
 ```bash
 7z e "Tru64 UNIX 5.0 - Disk 1 Operating System.7z"
+```
+
+copy it to your nfs share and under Tru64 go to that directory and run
+```
 chmod +x Tru64-License-Paks.sh
 ./Tru64-License-Paks.sh
 lmf list
@@ -289,17 +298,16 @@ lmf list
 
 ## Installing the newest patch
 
-Download the patch kit and untar it into the NFS share:
+Download the patch kit (as given in the preliminaries) and untar it into the NFS share:
 
-- <https://ftp.zx.net.nz/pub/Patches/digital/additional/tru64/5.1B-6/T64V51BB29AS0008-20100821.tar>
-  (from <https://www.zx.net.nz/vc/updates/opsys/dunix.shtml>, on the Linux side)
+
 
 ```bash
 mkdir /patch
 cp -r /mnt/fedora/patch/* /patch
 ```
 
-Reboot into single-user mode (`b -fl s` from the ROM console), then:
+Reboot into single-user mode (`boot -fl s` from the ROM console), then:
 
 ```bash
 cd /patch
@@ -329,11 +337,11 @@ Proceed through the prompts as before:
 
 ## Updating es40
 from time to time, ES40 needs to be updated.
-Run ```git pull --recurse-submodules```
+Run ```git pull --recurse-submodules && make -j6``` and ```sudo make install``` if used.
 
 ## Alternative links
-Older versions are available under <https://winworldpc.com/product/tru64/51b> or <https://fsck.technology/software/DEC-Compaq/Tru64%20Install%20Media/Tru64%20UNIX%205.1B4/> 
-Also check <https://www.zx.net.nz/vc/updates/opsys/dunix.shtml> direct link to the newest update: <https://ftp.zx.net.nz/pub/Patches/digital/additional/tru64/5.1B-6/T64V51BB29AS0008-20100821.tar> )
+Older versions of Tru64 are available under <https://winworldpc.com/product/tru64/51b> or <https://fsck.technology/software/DEC-Compaq/Tru64%20Install%20Media/Tru64%20UNIX%205.1B4/> 
+Also check <https://www.zx.net.nz/vc/updates/opsys/dunix.shtml>, direct link to the newest update patch kit: <https://ftp.zx.net.nz/pub/Patches/digital/additional/tru64/5.1B-6/T64V51BB29AS0008-20100821.tar> )
 
 
 ## Disclaimer
