@@ -202,7 +202,7 @@ P00>>> boot dka100
 ## General commands
 
 ```bash
-mount -r -t cdfs /dev/disk/cdrom1c /mnt/cdrom
+mount -r -t cdfs /dev/disk/cdrom?c /mnt/cdrom
 ```
 
 ## Networking — Linux side
@@ -347,9 +347,30 @@ Proceed through the prompts as before:
 - Archive obsolete files: `n`
 - When asked for Worldwide Language Support media: `/dev/disk/cdrom1c`
 
+## Installing compilers (c++ and Fortran)
+The C++ and fortran compilers can be found on disk 1 of [the Tru64 SPL Collection](https://archive.org/download/tru64-spl-collection), use the newest ones from April 2002:
+[Disk1](https://archive.org/download/tru64-spl-collection/Tru64_SPL_0402_Disc1_AG-RFLQP-RE.zip)
+[Disk2](https://archive.org/download/tru64-spl-collection/Tru64_SPL_0402_Disc2_AG-RHQHM-RE.zip)
+
+Mount the CD and install as follows:
+
+```bash
+mount -r /dev/disk/cdrom?c /mnt/cdrom
+CD_DIRECTORY=/mnt/cdrom
+export CD_DIRECTORY
+cd /mnt/cdrom/cdrom
+./cdmenu
+```
+Here one can enter the menu, scroll and install the desired software (7 for C++ and 13 for Fortran, check which additional libraries you want/need).
+
+
+
 ## Updating es40
 from time to time, ES40 needs to be updated.
 Run ```git pull --recurse-submodules && make -j6``` and ```sudo make install``` if used.
+
+## general Infos
+(2026-10-27) Alt-Enter now works for the full screen experience
 
 ## Alternative links
 Older versions of Tru64 are available under <https://winworldpc.com/product/tru64/51b> or <https://fsck.technology/software/DEC-Compaq/Tru64%20Install%20Media/Tru64%20UNIX%205.1B4/> 
